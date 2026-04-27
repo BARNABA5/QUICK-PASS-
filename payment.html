@@ -1,0 +1,126 @@
+<h2>💳 Payment Instructions</h2>
+
+<div class="payment-box">
+    <p>Send Money via M-PESA:</p>
+
+    <p><strong>Paybill / Number:</strong></p>
+    <h3 id="number">0743932033</h3>
+
+    <p><strong>Account Name:</strong> Mtua Felistus</p>
+
+    <button onclick="copyNumber()">📋 Copy Number</button>
+
+    <br><br>
+
+    <p>⚠️ After payment, go back to your dashboard and wait for confirmation.</p>
+
+    <button onclick="goBack()">⬅ Back to Dashboard</button>
+</div>
+
+<script>
+function copyNumber(){
+    let number = document.getElementById("number").innerText;
+    navigator.clipboard.writeText(number);
+    alert("M-PESA number copied!");
+}
+
+function goBack(){
+    window.location.href = "dashboard.html";
+}
+</script>
+<style>
+    /* PAYMENT PAGE STYLING */
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f9;
+}
+
+/* Top heading */
+h2 {
+    text-align: center;
+    margin-top: 40px;
+    color: #1e1e2f;
+}
+
+/* Payment container */
+.payment-box {
+    width: 320px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* Labels */
+.payment-box p {
+    color: #555;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+/* Phone number highlight */
+#number {
+    background: #f0f2f5;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #1e1e2f;
+}
+
+/* Account name */
+.payment-box strong {
+    color: #333;
+}
+
+/* Buttons */
+.payment-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Copy button */
+.payment-box button:first-of-type {
+    background: #007bff;
+    color: white;
+}
+
+.payment-box button:first-of-type:hover {
+    background: #0056b3;
+}
+
+/* Back button */
+.payment-box button:last-of-type {
+    background: #28a745;
+    color: white;
+}
+
+.payment-box button:last-of-type:hover {
+    background: #218838;
+}
+
+/* Warning text */
+.payment-box p:last-of-type {
+    font-size: 13px;
+    color: #999;
+    margin-top: 15px;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 480px) {
+    .payment-box {
+        width: 90%;
+        padding: 20px;
+    }
+}
+</style>

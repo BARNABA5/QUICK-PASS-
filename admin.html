@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+
+<style>
+body {
+    font-family: 'Segoe UI';
+    margin: 0;
+    background: #f4f6f9;
+}
+
+.topbar {
+    background: #1e1e2f;
+    color: white;
+    padding: 15px;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+input, select {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.save {
+    background: #28a745;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <h2>🛠 Admin Dashboard</h2>
+</div>
+
+<div class="container" id="container"></div>
+
+<script>
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzPQ4B1Q8nxImjhWPzJ9KlVs6AnAHswoLeurM5IWlmOP2-YJqROs_q-v5uZ2qCPego/exec";
+
+fetch(WEB_APP_URL)
+.then(res => res.json())
+.then(data => {
+
+    const container = document.getElementById("container");
+    container.innerHTML = "";
+
+    data.reverse().forEach(item => {
+
+        container.innerHTML += `
+            <div class="card">
+                <h3>${item.name}</h3>
+                <p>${item.email}</p>
+
+                <label>Status</label>
+                <select id="status-${item.row}">
+                    <option ${item.status === "Pending" ? "selected" : ""}>Pending</option>
+                    <option ${item.status === "Confirmed" ? "selected" : ""}>Confirmed</option>
+                </select>
+
+                <label>Price</label>
+                <input id="price-${item.row}" value="${item.price}">
+
+                <label>Date</label>
+                <input id="date-${item.row}" value="${item.date}">
+
+                <label>Location</label>
+                <input id="location-${item.row}" value="${item.location}">
+
+                <button class="save" onclick="save(${item.row})">
+                    💾 Save Changes
+                </button>
+            </div>
+        `;
+    });
+
+});
+
+function save(row) {
+
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            row: row,
+            status: document.getElementById("status-" + row).value,
+            price: document.getElementById("price-" + row).value,
+            date: document.getElementById("date-" + row).value,
+            location: document.getElementById("location-" + row).value
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Updated successfully!");
+    });
+
+}
+
+</script>
+
+</body>
+</html>

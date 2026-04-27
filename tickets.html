@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Tickets</title>
+
+<style>
+body {
+    font-family: 'Segoe UI';
+    background: #f4f6f9;
+    margin: 0;
+}
+
+.topbar {
+    background: #1e1e2f;
+    color: white;
+    padding: 15px;
+}
+
+.container {
+    padding: 20px;
+}
+
+.ticket {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.status {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.pending { color: orange; }
+.confirmed { color: green; }
+
+.loading {
+    text-align: center;
+    margin-top: 40px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <h2>🎟 My Tickets</h2>
+</div>
+
+<div class="container" id="container">
+    <p class="loading">Loading your tickets...</p>
+</div>
+
+<script>
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoLmpEIeJTBY5lIdMytQNRTqAbgbKV97GU_X_FcnD506wRBvgB5FsgNR6IpPRoUJi69g/exec";
+const userEmail = localStorage.getItem("userEmail");
+
+fetch(WEB_APP_URL)
+.then(res => res.json())
+.then(data => {
+
+    const container = document.getElementById("container");
+    container.innerHTML = "";
+
+    // Filter only THIS user's tickets
+    const myTickets = data.filter(t => t.email === userEmail);
+
+    if (myTickets.length === 0) {
+        container.innerHTML = "<p>No tickets found.</p>";
+        return;
+    }
+
+    myTickets.reverse().forEach(ticket => {
+
+        const statusClass = ticket.status === "Confirmed"
+            ? "confirmed"
+            : "pending";
+
+        const statusText = ticket.status === "Confirmed"
+            ? "✅ Confirmed"
+            : "⏳ Pending";
+
+        container.innerHTML += `
+            <div class="ticket">
+                <h3>${ticket.name}</h3>
+                <p>📅 ${ticket.date}</p>
+                <p>📍 ${ticket.location}</p>
+                <p>💰 KES ${ticket.price}</p>
+                <p class="status ${statusClass}">${statusText}</p>
+            </div>
+        `;
+    });
+
+})
+.catch(err => {
+    document.getElementById("container").innerHTML =
+        "Error loading tickets.";
+    console.error(err);
+});
+
+</script>
+
+</body>
+</html>

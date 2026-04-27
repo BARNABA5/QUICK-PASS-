@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ticket Receipt</title>
+
+<style>
+body {
+    font-family: 'Segoe UI';
+    background: #f4f6f9;
+    margin: 0;
+}
+
+.topbar {
+    background: #1e1e2f;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.receipt {
+    width: 350px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+h2 {
+    text-align: center;
+}
+
+.info {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #444;
+}
+
+.status {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.pending { color: orange; }
+.confirmed { color: green; }
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.print {
+    background: #007bff;
+    color: white;
+}
+
+.back {
+    background: #28a745;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <h3>🎟 Ticket Receipt</h3>
+</div>
+
+<div class="receipt" id="receipt">
+    <p>Loading receipt...</p>
+</div>
+
+<script>
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzPQ4B1Q8nxImjhWPzJ9KlVs6AnAHswoLeurM5IWlmOP2-YJqROs_q-v5uZ2qCPego/exec";
+const userEmail = localStorage.getItem("userEmail");
+
+fetch(WEB_APP_URL)
+.then(res => res.json())
+.then(data => {
+
+    const container = document.getElementById("receipt");
+
+    // Get latest booking for this user
+    const ticket = data
+        .filter(t => t.email === userEmail)
+        .reverse()[0];
+
+    if (!ticket) {
+        container.innerHTML = "<p>No receipt found.</p>";
+        return;
+    }
+
+    const statusClass = ticket.status === "Confirmed"
+        ? "confirmed"
+        : "pending";
+
+    const receiptId = "QP-" + Math.floor(Math.random() * 999999);
+
+    container.innerHTML = `
+        <h2>Quick Pass Receipt</h2>
+
+        <div class="info"><b>Receipt ID:</b> ${receiptId}</div>
+        <div class="info"><b>Name:</b> ${ticket.name}</div>
+        <div class="info"><b>Email:</b> ${ticket.email}</div>
+        <div class="info"><b>Date:</b> ${ticket.date}</div>
+        <div class="info"><b>Location:</b> ${ticket.location}</div>
+        <div class="info"><b>Price:</b> KES ${ticket.price}</div>
+
+        <div class="status ${statusClass}">
+            Status: ${ticket.status}
+        </div>
+
+        <button class="btn print" onclick="window.print()">🖨 Print Receipt</button>
+        <button class="btn back" onclick="goBack()">⬅ Back</button>
+    `;
+});
+
+function goBack() {
+    window.location.href = "dashboard.html";
+}
+
+</script>
+
+</body>
+</html>

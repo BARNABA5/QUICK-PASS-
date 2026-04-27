@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quick Pass Dashboard</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: #f4f6f9;
+    }
+
+    /* TOP NAV */
+    .topbar {
+        height: 60px;
+        background: #1e1e2f;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+    }
+
+    .menu-toggle {
+        display: none;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    /* LAYOUT */
+    .container {
+        display: flex;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 220px;
+        height: calc(100vh - 60px);
+        background: #2c2f48;
+        color: white;
+        padding: 20px;
+        transition: 0.3s;
+    }
+
+    .sidebar a {
+        display: block;
+        color: #ccc;
+        text-decoration: none;
+        margin: 10px 0;
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .sidebar a:hover {
+        background: #44476a;
+        color: white;
+    }
+
+    /* MAIN */
+    .main {
+        flex: 1;
+        padding: 15px;
+    }
+
+    /* EVENTS */
+    .events {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .price {
+        color: #28a745;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+    .btn {
+        margin-top: 10px;
+        display: inline-block;
+        padding: 10px;
+        background: #28a745;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    /* 📱 MOBILE */
+    @media (max-width: 768px) {
+        .menu-toggle {
+            display: block;
+        }
+
+        .sidebar {
+            position: absolute;
+            left: -250px;
+            top: 60px;
+            height: 100%;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .container {
+            flex-direction: column;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+    <h3>Quick Pass</h3>
+    <div id="userEmail"></div>
+</div>
+
+<div class="container">
+
+    <div class="sidebar" id="sidebar">
+        <a href="#">🏠 Dashboard</a>
+        <a href="tickets.html">🎟 My booked Tickets</a>
+        <a href="receipt.html">📅  Ticket</a>
+        <a href="#">⚙ Settings</a>
+        <a href="login.html">🚪 Logout</a>
+        <a href="admin.html">Admin</a>
+    </div>
+
+    <div class="main">
+        <h2>Available Events</h2>
+        <div class="events" id="eventsContainer"></div>
+    </div>
+
+</div>
+
+<script>
+    // Toggle menu (mobile)
+    function toggleMenu() {
+        document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    // Show user
+    const email = localStorage.getItem("userEmail");
+    document.getElementById("userEmail").innerText = email || "Guest";
+
+    // EVENTS WITH PRICE
+    const events = [
+        { name: "Music Concert", date: "May 10", location: "Nairobi", price: 1000 },
+        { name: "Tech Conference", date: "May 15", location: "Westlands", price: 1500 },
+        { name: "Church Youth Event", date: "May 20", location: "Karen", price: 500 },
+        { name: "Football Match", date: "May 25", location: "Kasarani", price: 800 }
+    ];
+
+    const container = document.getElementById("eventsContainer");
+
+    events.forEach(event => {
+        const card = `
+            <div class="card">
+                <h3>${event.name}</h3>
+                <p>📅 ${event.date}</p>
+                <p>📍 ${event.location}</p>
+                <p class="price">KES ${event.price}</p>
+                <button class="btn" onclick='bookEvent(${JSON.stringify(event)})'>Book Now</button>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+
+    // BOOK EVENT → SAVE + REDIRECT
+   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby8DAU0jKgV6xLXvb-QgQwy5OEhkVBwVmSNX2VNyFlHGFpNhOQaJCTuavEgYmnB4tOCqg/exec";
+
+function bookEvent(event) {
+    const email = localStorage.getItem("userEmail");
+
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            email: email,
+            name: event.name,
+            date: event.date,
+            location: event.location,
+            price: event.price
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Booking saved!");
+        
+        // Continue to payment
+        localStorage.setItem("selectedEvent", JSON.stringify(event));
+        window.location.href = "payment.html";
+    })
+    .catch(err => {
+        alert("Error saving booking");
+        console.error(err);
+    });
+}
+</script>
+
+</body>
+</html>

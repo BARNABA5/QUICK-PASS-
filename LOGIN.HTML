@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Pass - Login</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #f0f2f5; padding-top: 50px; }
+        .login-box { width: 320px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; }
+        .login-btn { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .back-link { display: block; margin-top: 15px; color: #007bff; text-decoration: none; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Quick Pass Login</h2>
+        <input type="email" id="email" placeholder="Email Address">
+        <input type="password" id="password" placeholder="Phone Number (Password)">
+        
+        <button class="login-btn" onclick="handleLogin()">Sign In</button>
+        
+        <a href="index.html" class="back-link">Don't have an account? Register</a>
+    </div>
+
+    <script>
+    function handleLogin() {
+        const email = document.getElementById('email').value.trim();
+        const pass = document.getElementById('password').value.trim();
+
+        // Basic validation
+        if (!email || !pass) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        // Admin login (case insensitive)
+        if (email.toLowerCase() === "admin@gmail.com" && pass === "1234") {
+            alert("Welcome Admin!");
+            window.location.href = "admin.html";
+            return;
+        }
+
+        // Simulated user database (temporary)
+        const users = [
+            { email: "user1@gmail.com", password: "1111" },
+            { email: "barnabas@gmail.com", password: "2222" }
+        ];
+
+        const user = users.find(u => 
+            u.email === email && u.password === pass
+        );
+
+        if (user) {
+            localStorage.setItem("userEmail", email);
+            alert("Login successful!");
+            window.location.href = "dashboard.html";
+        } else {
+            alert("Invalid email or password.");
+        }
+    }
+</script>
+</body>
+</html>
